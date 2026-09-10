@@ -8,6 +8,15 @@ router.get("/users", (req, res) => {
   res.json({ message: "Servidor funcionando." });
 });
 
+router.get("/messages/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  const userFiltrado = messages.filter((message) => {
+    return message.to === userId;
+  });
+  return res.json(userFiltrado);
+});
+
 router.post("/messages", (req, res) => {
   const { from, to, text } = req.body;
 
