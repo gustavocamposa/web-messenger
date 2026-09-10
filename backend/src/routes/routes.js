@@ -4,10 +4,6 @@ import { randomUUID } from "crypto";
 
 const router = express.Router();
 
-router.get("/users", (req, res) => {
-  res.json({ message: "Servidor funcionando." });
-});
-
 router.get("/messages/:userId", (req, res) => {
   const { userId } = req.params;
 
