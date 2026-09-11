@@ -10,6 +10,9 @@ router.get("/messages/:userId", (req, res) => {
   const userFiltrado = messages.filter((message) => {
     return message.to === userId;
   });
+
+  messages.length = 0;
+
   return res.json(userFiltrado);
 });
 
