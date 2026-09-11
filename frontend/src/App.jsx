@@ -1,7 +1,8 @@
+import "./styles/style.css"
+import PaginaPrincipal from "./pages/PaginaPrincipal";
 import { useEffect, useState } from "react";
 
 function App() {
-  const [messages, setMessages] = useState([]);
 
   const userId = "user-2";
 
@@ -15,15 +16,9 @@ function App() {
 
   return (
     <>
-      {messages.map((message) => (
-        <div key={message.id}>
-          {message.from}
-          {message.to}
-          {message.text}
-        </div>
-      ))}
+      <PaginaPrincipal />
     </>
   );
 }
 
-export default App;
+export default App; 

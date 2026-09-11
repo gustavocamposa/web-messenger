@@ -1,0 +1,12 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
