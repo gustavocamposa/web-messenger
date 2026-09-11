@@ -1,3 +1,3 @@
-const messages = [];
+let messages = [];
 
 export default messages;
