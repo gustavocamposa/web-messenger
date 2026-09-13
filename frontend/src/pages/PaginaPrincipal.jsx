@@ -4,9 +4,32 @@ export default function PaginaPrincipal() {
     const [text, setText] = useState("")
     const [send, setSend] = useState("")
     const [message, setMessage] = useState("")
+    const [messages, setMessages] = useState([])
 
-    function sendMessage() {
+    async function sendMessage() {
+        const response = await fetch("http://localhost:3000/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                from: text,
+                to: send,
+                text: message,
+            })
+        })
 
+        await response.json()
+
+        setMessage("")
+    }
+
+    async function getMessages() {
+        const response = await fetch(`http://localhost:3000/messages/${text}`)
+
+        const data = await response.json()
+
+        setMessages(data)
     }
     return (
         <>
@@ -27,7 +50,22 @@ export default function PaginaPrincipal() {
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Message." />
                     <br />
-                    <button>Send</button>
+
+                    <button onClick={sendMessage}>Send</button>
+
+                    <div className="messages">
+
+                        Messages
+
+                        <button onClick={getMessages}>Check Messages</button>
+
+                        {messages.map((message, index) => (
+                            <p key={index}>
+                                {message.from}: {message.text}
+                            </p>
+                        ))}
+                    </div>
+
                 </label>
             </div>
         </>
