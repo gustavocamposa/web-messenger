@@ -31,6 +31,16 @@ export default function PaginaPrincipal() {
 
         setMessages(data)
     }
+
+
+    async function healthCheck() {
+        const response = await fetch("http://localhost:3000/health")
+
+        const data = await response.json()
+
+        console.log(data)
+    }
+
     return (
         <>
             <div>
@@ -65,6 +75,7 @@ export default function PaginaPrincipal() {
                             </p>
                         ))}
                     </div>
+                    <button onClick={healthCheck}>Health Check</button>
 
                 </label>
             </div>

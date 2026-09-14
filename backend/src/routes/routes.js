@@ -4,6 +4,14 @@ import { randomUUID } from "crypto";
 
 const router = express.Router();
 
+router.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date(),
+    uptime: process.uptime()
+  });
+});
+
 router.get("/messages/:userId", (req, res) => {
   const { userId } = req.params;
 
@@ -19,6 +27,8 @@ router.get("/messages/:userId", (req, res) => {
 
   return res.json(userFiltrado);
 });
+
+
 
 router.post("/messages", (req, res) => {
   const { from, to, text } = req.body;
