@@ -7,7 +7,7 @@ export default function PaginaPrincipal() {
   const [messages, setMessages] = useState([]);
 
   async function sendMessage() {
-    const response = await fetch("http://localhost:3000/messages", {
+    const request = await fetch("http://localhost:3000/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,8 +19,6 @@ export default function PaginaPrincipal() {
       }),
     });
 
-    await response.json();
-
     setMessage("");
   }
 
@@ -31,7 +29,6 @@ export default function PaginaPrincipal() {
 
     setMessages(data);
   }
-
   return (
     <>
       <div>
