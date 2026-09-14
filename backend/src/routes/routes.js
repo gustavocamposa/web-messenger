@@ -1,8 +1,11 @@
 import messages from "../../data/messages.js";
 import express from "express";
 import { randomUUID } from "crypto";
+import healthCheck from "../healthCheck.js";
 
 const router = express.Router();
+
+router.get("/health", healthCheck);
 
 router.get("/messages/:userId", (req, res) => {
   const { userId } = req.params;
