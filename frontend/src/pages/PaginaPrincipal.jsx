@@ -39,9 +39,9 @@ export default function PaginaPrincipal() {
   return (
     <>
       <div>
+        <button onClick={copyUserId}>Copy ID</button>
+        <p>Your ID: {userId}</p>
         <label>
-          <button onClick={copyUserId}>Copy ID</button>
-          <p>Your ID: {userId}</p>
           <input
             type="text"
             value={send}
