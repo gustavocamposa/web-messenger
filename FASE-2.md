@@ -6,10 +6,11 @@ Evoluir a Fase 1 adicionando uma identidade persistente para cada usuário.
 
 Nesta fase:
 
-- Cada usuário deve possuir um UUID.
-- O usuário não deve mais digitar manualmente seu próprio `userId`.
-- O frontend deve criar e armazenar a identidade do usuário.
-- O usuário deve continuar com o mesmo UUID ao recarregar a página.
+- Cada usuário deve possuir um UUID. [OK]
+- O usuário não deve mais digitar manualmente seu próprio `userId`. [OK]
+- O frontend deve criar e armazenar a identidade do usuário. [OK]
+- O usuário deve continuar com o mesmo UUID ao recarregar a página.[OK]
+
 - Ainda não existe autenticação real.
 - Ainda não existe banco de dados.
 - Ainda não existe WebSocket.
@@ -18,7 +19,7 @@ Nesta fase:
 
 ---
 
-## Identidade do usuário
+## Identidade do usuário [OK]
 
 Na primeira vez que o frontend for aberto, ele deve gerar um UUID para o usuário.
 
@@ -57,7 +58,7 @@ Existe um userId salvo?
 Pode ser utilizado:
 
 ```javascript
-crypto.randomUUID()
+crypto.randomUUID();
 ```
 
 para gerar o UUID.
