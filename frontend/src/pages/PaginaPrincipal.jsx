@@ -19,11 +19,6 @@ export default function PaginaPrincipal() {
       }),
     });
 
-<<<<<<< HEAD
-=======
-    await response.json();
-
->>>>>>> main
     setMessage("");
   }
 
@@ -34,10 +29,6 @@ export default function PaginaPrincipal() {
 
     setMessages(data);
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> main
   return (
     <>
       <div>
