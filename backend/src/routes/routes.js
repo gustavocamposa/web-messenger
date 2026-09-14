@@ -1,16 +1,11 @@
 import messages from "../../data/messages.js";
 import express from "express";
 import { randomUUID } from "crypto";
+import healthCheck from "../healthCheck.js";
 
 const router = express.Router();
 
-router.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date(),
-    uptime: process.uptime()
-  });
-});
+router.get("/health", healthCheck);
 
 router.get("/messages/:userId", (req, res) => {
   const { userId } = req.params;
@@ -27,8 +22,6 @@ router.get("/messages/:userId", (req, res) => {
 
   return res.json(userFiltrado);
 });
-
-
 
 router.post("/messages", (req, res) => {
   const { from, to, text } = req.body;
