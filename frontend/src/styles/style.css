@@ -10,3 +10,11 @@ label {
     flex-direction: column;
     gap: 8px;
 }
+
+.messages {
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+}

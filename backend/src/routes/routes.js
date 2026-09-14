@@ -1,8 +1,11 @@
 import messages from "../../data/messages.js";
 import express from "express";
 import { randomUUID } from "crypto";
+import healthCheck from "../healthCheck.js";
 
 const router = express.Router();
+
+router.get("/health", healthCheck);
 
 router.get("/messages/:userId", (req, res) => {
   const { userId } = req.params;
@@ -11,7 +14,11 @@ router.get("/messages/:userId", (req, res) => {
     return message.to === userId;
   });
 
-  messages.length = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].to === userId) {
+      messages.splice(i, 1);
+    }
+  }
 
   return res.json(userFiltrado);
 });

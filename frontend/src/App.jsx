@@ -1,24 +1,14 @@
-import "./styles/style.css"
+import "./styles/style.css";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
-import { useEffect, useState } from "react";
+import HealthCheck from "./components/HealthCheck";
 
 function App() {
-
-  const userId = "user-2";
-
-  useEffect(() => {
-    fetch(`http://localhost:3000/messages/${userId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setMessages(data);
-      });
-  }, []);
-
   return (
     <>
+      <HealthCheck />
       <PaginaPrincipal />
     </>
   );
 }
 
-export default App; 
+export default App;
