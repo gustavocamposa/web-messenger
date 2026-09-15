@@ -6,7 +6,7 @@ export default function PaginaPrincipal() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [feedback, setFeedback] = useState("");
-  const userId = getUserId();
+  const [userId, setUserId] = useState(getUserId);
 
   async function getMessages() {
     const response = await fetch(`http://localhost:3000/messages/${userId}`);
@@ -57,10 +57,24 @@ export default function PaginaPrincipal() {
   async function copyUserId() {
     await navigator.clipboard.writeText(userId);
   }
+
+  function resetId() {
+    const newUserId = crypto.randomUUID();
+
+    localStorage.setItem("userId", newUserId);
+    setUserId(newUserId);
+  }
+
   return (
     <>
       <div>
-        <button onClick={copyUserId}>Copy ID</button>
+        <button className="btn" onClick={resetId}>
+          Reset Identify
+        </button>
+        <br />
+        <button className="btn" onClick={copyUserId}>
+          Copy ID
+        </button>
         <p>Your ID: {userId}</p>
         <label>
           <input

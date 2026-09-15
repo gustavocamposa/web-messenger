@@ -340,17 +340,18 @@ Resposta:
 
 ## Regras da Fase 2
 
-- Manter todos os requisitos da Fase 1.
-- Cada usuário deve possuir um UUID.
-- O frontend deve gerar o UUID automaticamente.
-- O UUID deve ser persistido no navegador.
-- Recarregar a página não pode alterar o UUID.
-- O próprio `userId` não deve mais ser digitado manualmente.
-- Deve ser possível copiar o próprio UUID.
+- Manter todos os requisitos da Fase 1. [OK]
+- Cada usuário deve possuir um UUID. [OK]
+- O frontend deve gerar o UUID automaticamente. [OK]
+- O UUID deve ser persistido no navegador. [OK]
+- Recarregar a página não pode alterar o UUID.[OK]
+- O próprio `userId` não deve mais ser digitado manualmente. [OK]
+- Deve ser possível copiar o próprio UUID. [OK]
 - Deve existir uma forma de resetar a identidade.
-- `from` deve ser automaticamente definido pelo frontend.
-- `to` continua sendo informado manualmente.
-- Backend deve validar os UUIDs.
+- `from` deve ser automaticamente definido pelo frontend. [OK]
+- `to` continua sendo informado manualmente. [OK]
+- Backend deve validar os UUIDs. [OK]
+
 - Mensagens continuam apenas em memória.
 - Não usar banco de dados.
 - Não usar WebSocket.
