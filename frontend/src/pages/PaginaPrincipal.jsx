@@ -86,7 +86,7 @@ export default function PaginaPrincipal() {
             <button onClick={getMessages}>Check Messages</button>
             {messages.map((message, index) => (
               <p key={index}>
-                {message.from} {message.text}
+                {message.from}: {message.text}
               </p>
             ))}
           </div>
