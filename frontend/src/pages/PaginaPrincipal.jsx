@@ -2,12 +2,19 @@ import { useState } from "react";
 import { getUserId } from "../utils/userId";
 
 export default function PaginaPrincipal() {
-  const [text, setText] = useState("");
   const [send, setSend] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [feedback, setFeedback] = useState("");
   const userId = getUserId();
+
+  async function getMessages() {
+    const response = await fetch(`http://localhost:3000/messages/${userId}`);
+
+    const data = await response.json();
+
+    setMessages(data);
+  }
 
   async function sendMessage() {
     if (!send.trim()) {
@@ -16,7 +23,7 @@ export default function PaginaPrincipal() {
     }
 
     if (!message.trim()) {
-      setFeedback("Digite uma mensagem.");
+      setFeedback("Você deve digitar uma mensagem.");
       return;
     }
 
@@ -33,24 +40,18 @@ export default function PaginaPrincipal() {
         }),
       });
 
+      const data = await request.json();
+
       if (!request.ok) {
-        setFeedback("Não foi possível enviar a mensagem.");
+        setFeedback(data.message);
         return;
       }
 
       setMessage("");
-      setFeedback("Mensagem enviada com sucesso!");
+      setFeedback(data.message);
     } catch (error) {
       setFeedback("Erro ao conectar com o servidor.");
     }
-  }
-
-  async function getMessages() {
-    const response = await fetch(`http://localhost:3000/messages/${userId}`);
-
-    const data = await response.json();
-
-    setMessages(data);
   }
 
   async function copyUserId() {
