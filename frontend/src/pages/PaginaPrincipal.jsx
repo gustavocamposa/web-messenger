@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getUserId } from "../utils/userId";
+import "../styles/style.css";
 
 export default function PaginaPrincipal() {
   const [send, setSend] = useState("");
@@ -10,9 +11,7 @@ export default function PaginaPrincipal() {
 
   async function getMessages() {
     const response = await fetch(`http://localhost:3000/messages/${userId}`);
-
     const data = await response.json();
-
     setMessages(data);
   }
 
@@ -60,52 +59,58 @@ export default function PaginaPrincipal() {
 
   function resetId() {
     const newUserId = crypto.randomUUID();
-
     localStorage.setItem("userId", newUserId);
     setUserId(newUserId);
   }
 
   return (
-    <>
-      <div>
-        <button className="btn" onClick={resetId}>
-          Reset Identify
-        </button>
-        <br />
-        <button className="btn" onClick={copyUserId}>
-          Copy ID
-        </button>
-        <p>Your ID: {userId}</p>
-        <label>
+    <div className="container">
+      <div className="card">
+        <div className="id-section">
+          <button className="btn btn-secondary" onClick={resetId}>
+            Reset Identify
+          </button>
+          <button className="btn btn-secondary" onClick={copyUserId}>
+            Copy ID
+          </button>
+          <p className="user-id">Your ID: {userId}</p>
+        </div>
+
+        <div className="form-section">
           <input
+            className="input"
             type="text"
             value={send}
             onChange={(e) => setSend(e.target.value)}
             placeholder="Send To."
           />
-          <br />
           <input
+            className="input"
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Message."
           />
-          <br />
+          <button className="btn btn-primary" onClick={sendMessage}>
+            Send
+          </button>
+          {feedback && <p className="feedback">{feedback}</p>}
+        </div>
 
-          <button onClick={sendMessage}>Send</button>
-          <p>{feedback}</p>
-
-          <div className="messages">
-            Messages
-            <button onClick={getMessages}>Check Messages</button>
-            {messages.map((message, index) => (
-              <p key={index}>
-                {message.from}: {message.text}
-              </p>
-            ))}
+        <div className="messages">
+          <div className="messages-header">
+            <h3>Messages</h3>
+            <button className="btn btn-secondary" onClick={getMessages}>
+              Check Messages
+            </button>
           </div>
-        </label>
+          {messages.map((message, index) => (
+            <p className="message-item" key={index}>
+              <strong>{message.from}:</strong> {message.text}
+            </p>
+          ))}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
