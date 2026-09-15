@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { getUserId } from "../utils/userId";
 
 export default function PaginaPrincipal() {
   const [text, setText] = useState("");
   const [send, setSend] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+
+  const userId = getUserId();
 
   async function sendMessage() {
     const request = await fetch("http://localhost:3000/messages", {
@@ -13,7 +16,7 @@ export default function PaginaPrincipal() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: text,
+        from: userId,
         to: send,
         text: message,
       }),
@@ -29,17 +32,16 @@ export default function PaginaPrincipal() {
 
     setMessages(data);
   }
+
+  async function copyUserId() {
+    await navigator.clipboard.writeText(userId);
+  }
   return (
     <>
       <div>
+        <button onClick={copyUserId}>Copy ID</button>
+        <p>Your ID: {userId}</p>
         <label>
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Your user ID."
-          />
-          <br />
           <input
             type="text"
             value={send}
