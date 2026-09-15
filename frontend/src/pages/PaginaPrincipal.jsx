@@ -6,27 +6,47 @@ export default function PaginaPrincipal() {
   const [send, setSend] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-
+  const [feedback, setFeedback] = useState("");
   const userId = getUserId();
 
   async function sendMessage() {
-    const request = await fetch("http://localhost:3000/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: userId,
-        to: send,
-        text: message,
-      }),
-    });
+    if (!send.trim()) {
+      setFeedback("Informe para quem deseja enviar a mensagem.");
+      return;
+    }
 
-    setMessage("");
+    if (!message.trim()) {
+      setFeedback("Digite uma mensagem.");
+      return;
+    }
+
+    try {
+      const request = await fetch("http://localhost:3000/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: userId,
+          to: send,
+          text: message,
+        }),
+      });
+
+      if (!request.ok) {
+        setFeedback("Não foi possível enviar a mensagem.");
+        return;
+      }
+
+      setMessage("");
+      setFeedback("Mensagem enviada com sucesso!");
+    } catch (error) {
+      setFeedback("Erro ao conectar com o servidor.");
+    }
   }
 
   async function getMessages() {
-    const response = await fetch(`http://localhost:3000/messages/${text}`);
+    const response = await fetch(`http://localhost:3000/messages/${userId}`);
 
     const data = await response.json();
 
@@ -58,6 +78,7 @@ export default function PaginaPrincipal() {
           <br />
 
           <button onClick={sendMessage}>Send</button>
+          <p>{feedback}</p>
 
           <div className="messages">
             Messages
