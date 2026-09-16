@@ -12,8 +12,12 @@ const uuidRegex =
 
 router.get("/health", healthCheck);
 
-router.get("/messages/:userId", (req, res) => {
+router.get("/messages/:userId", authMiddleware, (req, res) => {
   const { userId } = req.params;
+
+  if (userId !== req.userId) {
+    throw new AppError("Acesso negado", 403);
+  }
 
   if (!uuidRegex.test(userId)) {
     throw new AppError("ID inválido", 400);
@@ -32,12 +36,8 @@ router.get("/messages/:userId", (req, res) => {
   return res.json(userFiltrado);
 });
 
-router.post("/messages", (req, res) => {
-  const { from, to, text } = req.body;
-
-  if (!from || !uuidRegex.test(from)) {
-    throw new AppError("ID inválido", 400);
-  }
+router.post("/messages", authMiddleware, (req, res) => {
+  const { to, text } = req.body;
 
   if (!to || !uuidRegex.test(to)) {
     throw new AppError("ID inválido", 400);
@@ -51,7 +51,7 @@ router.post("/messages", (req, res) => {
 
   const message = {
     id,
-    from,
+    from: req.userId,
     to,
     text,
   };
@@ -60,6 +60,7 @@ router.post("/messages", (req, res) => {
 
   res.status(200).json({ message: "Mensagem enviada!" });
 });
+
 router.get("/me", authMiddleware, (req, res) => {
   res.json({ userId: req.userId });
 });
