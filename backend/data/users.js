@@ -10,7 +10,7 @@ function findUserById(id) {
   return userId;
 }
 
-function createUser({ id, email, passwordHash }) {
+function createUser({ email, password }) {
   const id = randomUUID();
   const passwordHash = bcrypt.hash(password, 10);
   const newUser = { id, email, passwordHash };
