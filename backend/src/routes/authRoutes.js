@@ -10,7 +10,7 @@ router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new AppError("Email ou senha não cadastrado", 400);
+    throw new AppError("Email ou senha não informados", 400);
   }
 
   const userExists = findUserByEmail(email);
@@ -18,10 +18,6 @@ router.post("/register", async (req, res) => {
   if (userExists) {
     throw new AppError("Email já cadastrado", 409);
   }
-
-  const passwordHash = await bcrypt.hash(password, 10);
-
-  const id = randomUUID();
 
   const userCreated = createUser({ id, email, passwordHash });
 
