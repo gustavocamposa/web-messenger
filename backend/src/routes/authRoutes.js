@@ -1,7 +1,8 @@
 import express from "express";
+import bcrypt from "bcryptjs";
 import { findUserByEmail, createUser } from "../../data/users.js";
 import { AppError } from "../errors/AppError.js";
-import { generateToken } from "../utils/authToken.js";
+import { generateToken } from "../utils/token.js";
 
 const router = express.Router();
 
@@ -51,4 +52,5 @@ router.post("/login", async (req, res) => {
     token,
   });
 });
+
 export default router;
