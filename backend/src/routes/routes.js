@@ -3,6 +3,7 @@ import express from "express";
 import { randomUUID } from "crypto";
 import healthCheck from "../healthCheck.js";
 import { AppError } from "../errors/AppError.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -58,6 +59,9 @@ router.post("/messages", (req, res) => {
   messages.push(message);
 
   res.status(200).json({ message: "Mensagem enviada!" });
+});
+router.get("/me", authMiddleware, (req, res) => {
+  res.json({ userId: req.userId });
 });
 
 export default router;

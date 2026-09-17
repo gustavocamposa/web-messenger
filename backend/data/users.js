@@ -1,3 +1,6 @@
+import { randomUUID } from "crypto";
+import bcrypt from "bcryptjs";
+
 const users = [];
 
 function findUserByEmail(email) {
@@ -10,9 +13,9 @@ function findUserById(id) {
   return userId;
 }
 
-function createUser({ email, password }) {
+async function createUser({ email, password }) {
   const id = randomUUID();
-  const passwordHash = bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
   const newUser = { id, email, passwordHash };
   users.push(newUser);
   return newUser;
