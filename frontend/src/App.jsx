@@ -1,14 +1,10 @@
 import "./styles/style.css";
-import PaginaPrincipal from "./pages/PaginaPrincipal";
-import Login from "./pages/Login";
 import HealthCheck from "./components/HealthCheck";
-import Register from "./pages/Register";
+import Auth from "./components/Auth";
 function App() {
   return (
     <>
-      <Register />
-      <Login />
-      <PaginaPrincipal />
+      <Auth />
       <HealthCheck />
     </>
   );
