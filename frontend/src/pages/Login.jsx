@@ -35,7 +35,7 @@ export default function Login({ onLoginSuccess }) {
         return;
       }
 
-      onLoginSuccess(data.token);
+      onLoginSuccess({ token: data.token, id: data.id });
     } catch (error) {
       setFeedback("Erro ao conectar com o servidor.");
     }

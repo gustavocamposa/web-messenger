@@ -1,17 +1,26 @@
 import { useState } from "react";
-import { getUserId } from "../utils/userId";
 import "../styles/style.css";
 
-export default function PaginaPrincipal() {
+export default function PaginaPrincipal({ token, userId, onLogout }) {
   const [send, setSend] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [feedback, setFeedback] = useState("");
-  const [userId, setUserId] = useState(getUserId);
 
   async function getMessages() {
-    const response = await fetch(`http://localhost:3000/messages/${userId}`);
+    const response = await fetch(`http://localhost:3000/messages/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     const data = await response.json();
+
+    if (!response.ok) {
+      setFeedback(data.message);
+      return;
+    }
+
     setMessages(data);
   }
 
@@ -31,9 +40,9 @@ export default function PaginaPrincipal() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          from: userId,
           to: send,
           text: message,
         }),
@@ -57,21 +66,15 @@ export default function PaginaPrincipal() {
     await navigator.clipboard.writeText(userId);
   }
 
-  function resetId() {
-    const newUserId = crypto.randomUUID();
-    localStorage.setItem("userId", newUserId);
-    setUserId(newUserId);
-  }
-
   return (
     <div className="container">
       <div className="card">
         <div className="id-section">
-          <button className="btn btn-secondary" onClick={resetId}>
-            Reset Identify
-          </button>
           <button className="btn btn-secondary" onClick={copyUserId}>
             Copy ID
+          </button>
+          <button className="btn btn-secondary" onClick={onLogout}>
+            Logout
           </button>
           <p className="user-id">Your ID: {userId}</p>
         </div>

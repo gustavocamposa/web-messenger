@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import PaginaPrincipal from "../pages/PaginaPrincipal";

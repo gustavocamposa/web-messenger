@@ -35,7 +35,27 @@ export default function Register({ onRegisterSucess }) {
         return;
       }
 
-      onRegisterSucess(data.token);
+      const loginRequest = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const loginData = await loginRequest.json();
+
+      if (!loginRequest.ok) {
+        setFeedback(
+          "Cadastro realizado, mas não foi possível fazer login automático.",
+        );
+        return;
+      }
+
+      onRegisterSucess({ token: loginData.token, id: loginData.id });
     } catch (error) {
       setFeedback("Erro ao conectar com o servidor.");
     }
