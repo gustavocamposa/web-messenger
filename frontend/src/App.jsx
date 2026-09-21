@@ -1,10 +1,10 @@
 import "./styles/style.css";
-import PaginaPrincipal from "./pages/PaginaPrincipal";
 import HealthCheck from "./components/HealthCheck";
+import Auth from "./components/Auth";
 function App() {
   return (
     <>
-      <PaginaPrincipal />
+      <Auth />
       <HealthCheck />
     </>
   );
