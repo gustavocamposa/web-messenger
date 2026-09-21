@@ -16,6 +16,11 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
 
     const data = await response.json();
 
+    if (response.status === 401) {
+      onLogout();
+      return;
+    }
+
     if (!response.ok) {
       setFeedback(data.message);
       return;
@@ -49,6 +54,11 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
       });
 
       const data = await request.json();
+
+      if (request.status === 401) {
+        onLogout();
+        return;
+      }
 
       if (!request.ok) {
         setFeedback(data.message);
