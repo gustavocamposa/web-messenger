@@ -1,6 +1,5 @@
-import messages from "../../data/messages.js";
+import { createMessage, takeMessagesByUser } from "../../data/messages.js";
 import express from "express";
-import { randomUUID } from "crypto";
 import healthCheck from "../healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -12,7 +11,7 @@ const uuidRegex =
 
 router.get("/health", healthCheck);
 
-router.get("/messages/:userId", authMiddleware, (req, res) => {
+router.get("/messages/:userId", authMiddleware, async (req, res) => {
   const { userId } = req.params;
 
   if (userId !== req.userId) {
@@ -23,20 +22,12 @@ router.get("/messages/:userId", authMiddleware, (req, res) => {
     throw new AppError("ID inválido", 400);
   }
 
-  const userFiltrado = messages.filter((message) => {
-    return message.to === userId;
-  });
+  const userMessages = await takeMessagesByUser(userId);
 
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].to === userId) {
-      messages.splice(i, 1);
-    }
-  }
-
-  return res.json(userFiltrado);
+  return res.json(userMessages);
 });
 
-router.post("/messages", authMiddleware, (req, res) => {
+router.post("/messages", authMiddleware, async (req, res) => {
   const { to, text } = req.body;
 
   if (!to || !uuidRegex.test(to)) {
@@ -47,19 +38,11 @@ router.post("/messages", authMiddleware, (req, res) => {
     throw new AppError("Campo mensagem vazio", 400);
   }
 
-  const id = randomUUID();
-
-  const message = {
-    id,
-    from: req.userId,
-    to,
-    text,
-  };
-
-  messages.push(message);
+  await createMessage({ from: req.userId, to, text });
 
   res.status(200).json({ message: "Mensagem enviada!" });
 });
+
 router.get("/me", authMiddleware, (req, res) => {
   res.json({ userId: req.userId });
 });
