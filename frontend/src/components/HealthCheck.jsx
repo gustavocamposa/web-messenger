@@ -3,9 +3,7 @@ import { useEffect } from "react";
 export default function HealthCheck() {
   useEffect(() => {
     const checkHealth = () => {
-      fetch(
-        "https://616c-2001-8a0-7c07-8900-2189-2f6c-747e-2207.ngrok-free.app/health",
-      )
+      fetch("http://localhost:3000/health")
         .then((response) => response.json())
         .then((data) => {
           console.log("Health Check:", data);

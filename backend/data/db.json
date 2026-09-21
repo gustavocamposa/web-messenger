@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "id": "8506f580-9e43-42fe-81ef-9da0fe9c1ca8",
+      "email": "gustavo@email.com",
+      "passwordHash": "$2b$10$HIpIz034Rch2rm7bFCFLuOieqT9rVkBzfm2CBiHZz8q.g0iD1WCVS"
+    }
+  ],
+  "messages": []
+}
