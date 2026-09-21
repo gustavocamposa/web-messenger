@@ -475,7 +475,7 @@ POST /messages
 o backend deve criar:
 
 ```ts
-createdAt: new Date().toISOString()
+createdAt: new Date().toISOString();
 ```
 
 ou equivalente.
