@@ -10,11 +10,11 @@ Os principais pontos agora são:
 - Manter os usuários mesmo que o backend seja reiniciado. [OK]
 - Buscar usuários disponíveis pelo backend.
 - Mostrar o email dos usuários no frontend, escondendo o UUID da interface principal.
-- Continuar usando o UUID internamente nas requests. 
+- Continuar usando o UUID internamente nas requests.
 - Adicionar data e hora às mensagens.
 - Adicionar logs em todas as rotas do backend.
 - Persistir o login no frontend após refresh. [OK]
-- Parar de deletar mensagens depois da leitura.
+- Parar de deletar mensagens depois da leitura. [OK]
 - Mostrar remetente, data e hora em cada mensagem.
 
 ---
