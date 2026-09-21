@@ -6,14 +6,14 @@ Nesta fase, o objetivo é refinar a aplicação e torná-la mais próxima de um 
 
 Os principais pontos agora são:
 
-- Persistir usuários em arquivo JSON.
-- Manter os usuários mesmo que o backend seja reiniciado.
+- Persistir usuários em arquivo JSON. [OK]
+- Manter os usuários mesmo que o backend seja reiniciado. [OK]
 - Buscar usuários disponíveis pelo backend.
 - Mostrar o email dos usuários no frontend, escondendo o UUID da interface principal.
-- Continuar usando o UUID internamente nas requests.
+- Continuar usando o UUID internamente nas requests. 
 - Adicionar data e hora às mensagens.
 - Adicionar logs em todas as rotas do backend.
-- Persistir o login no frontend após refresh.
+- Persistir o login no frontend após refresh. [OK]
 - Parar de deletar mensagens depois da leitura.
 - Mostrar remetente, data e hora em cada mensagem.
 
@@ -475,7 +475,7 @@ POST /messages
 o backend deve criar:
 
 ```ts
-createdAt: new Date().toISOString()
+createdAt: new Date().toISOString();
 ```
 
 ou equivalente.

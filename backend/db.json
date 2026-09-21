@@ -1,0 +1,64 @@
+{
+  "users": [
+    {
+      "id": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "email": "gustavo@email.com",
+      "passwordHash": "$2b$10$4DqxnvBOCcPV5rTUTyKF.O9V.xMxgMaUkEd3pLQ429dLvh0e/6FkO"
+    },
+    {
+      "id": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "email": "alexandre@anwu.com",
+      "passwordHash": "$2b$10$Wwr5x1zvkXDIPPbiy80cBe16PvwMj2pmErF6lzZwFnDOZQEf39Teu"
+    }
+  ],
+  "messages": [
+    {
+      "id": "3bea5773-8b3b-42f1-b964-cea362963839",
+      "from": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "to": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "text": "eae"
+    },
+    {
+      "id": "68c5599c-5e18-4e7c-a63d-b1a39ee26748",
+      "from": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "to": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "text": "eaee"
+    },
+    {
+      "id": "5e9f8441-65ad-4c18-b007-884273aeffdc",
+      "from": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "to": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "text": "eae"
+    },
+    {
+      "id": "b45ac1b2-f386-4380-9c69-2b40835160bd",
+      "from": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "to": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "text": "eaeee"
+    },
+    {
+      "id": "d7e91804-2c3c-43b1-bfd3-0ca5ea46f98b",
+      "from": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "to": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "text": "suave man?"
+    },
+    {
+      "id": "8f7b24bd-0880-4c07-98c0-f5cef503c82b",
+      "from": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "to": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "text": "ss"
+    },
+    {
+      "id": "3f06f4b9-a261-453b-9599-ba1407bd3241",
+      "from": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "to": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "text": "eaee"
+    },
+    {
+      "id": "fe33bd43-147c-4528-9a7e-7578c1903e3f",
+      "from": "2afdf951-6c7d-42ab-8eb0-c58170267b1c",
+      "to": "94ef1bc8-d437-46f0-b5d9-dafc1ca34a12",
+      "text": "ss"
+    }
+  ]
+}
