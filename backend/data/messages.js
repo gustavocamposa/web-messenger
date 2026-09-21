@@ -4,18 +4,19 @@ import db from "./db.js";
 async function createMessage({ from, to, text }) {
   const message = { id: randomUUID(), from, to, text };
 
-  db.data.messages.push(message);
-  await db.write();
+  await db.update(({ messages }) => messages.push(message));
 
   return message;
 }
 
 async function takeMessagesByUser(userId) {
-  const received = db.data.messages.filter((message) => message.to === userId);
-  db.data.messages = db.data.messages.filter(
-    (message) => message.to !== userId,
-  );
-  await db.write();
+  let received = [];
+
+  await db.update(({ messages }) => {
+    received = messages.filter((message) => message.to === userId);
+
+    return messages.filter((message) => message.to !== userId);
+  });
 
   return received;
 }

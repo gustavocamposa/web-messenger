@@ -15,8 +15,7 @@ async function createUser({ email, password }) {
   const passwordHash = await bcrypt.hash(password, 10);
   const newUser = { id, email, passwordHash };
 
-  db.data.users.push(newUser);
-  await db.write();
+  await db.update(({ users }) => users.push(newUser));
 
   return newUser;
 }
