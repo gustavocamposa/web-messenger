@@ -8,14 +8,11 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
   const [feedback, setFeedback] = useState("");
 
   async function getMessages() {
-    const response = await fetch(
-      `https://616c-2001-8a0-7c07-8900-2189-2f6c-747e-2207.ngrok-free.app/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const response = await fetch(`http://localhost:3000/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -39,20 +36,17 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
     }
 
     try {
-      const request = await fetch(
-        "https://616c-2001-8a0-7c07-8900-2189-2f6c-747e-2207.ngrok-free.app/messages",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            to: send,
-            text: message,
-          }),
+      const request = await fetch("http://localhost:3000/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          to: send,
+          text: message,
+        }),
+      });
 
       const data = await request.json();
 

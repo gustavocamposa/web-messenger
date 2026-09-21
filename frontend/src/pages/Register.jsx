@@ -17,19 +17,16 @@ export default function Register({ onRegisterSucess, onGoToLogin }) {
     }
 
     try {
-      const request = await fetch(
-        "https://616c-2001-8a0-7c07-8900-2189-2f6c-747e-2207.ngrok-free.app/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
+      const request = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       const data = await request.json();
 
@@ -38,19 +35,16 @@ export default function Register({ onRegisterSucess, onGoToLogin }) {
         return;
       }
 
-      const loginRequest = await fetch(
-        "https://616c-2001-8a0-7c07-8900-2189-2f6c-747e-2207.ngrok-free.app/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
+      const loginRequest = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       const loginData = await loginRequest.json();
 
