@@ -9,6 +9,8 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
+  console.log(`POST /register (${email}) ${new Date().toLocaleString()}`);
+
   if (!email || !password) {
     throw new AppError("Email ou senha não informados", 400);
   }
@@ -31,6 +33,8 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+
+  console.log(`POST /login (${email}) ${new Date().toLocaleString()}`);
 
   if (!email || !password) {
     throw new AppError("Email ou senha não informados", 400);
