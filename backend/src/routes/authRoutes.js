@@ -21,7 +21,10 @@ router.post("/register", async (req, res) => {
 
   const userCreated = await createUser({ email, password });
 
+  console.log("Registro feito com sucesso.");
+
   res.status(201).json({
+    status: "Ok",
     id: userCreated.id,
     email: userCreated.email,
   });
@@ -48,7 +51,10 @@ router.post("/login", async (req, res) => {
 
   const token = generateToken(user.id);
 
+  console.log("Login feito com sucesso");
+
   return res.status(200).json({
+    status: "OK",
     token,
     id: user.id,
   });

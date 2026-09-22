@@ -24,7 +24,7 @@ router.get("/messages/:userId", authMiddleware, async (req, res) => {
 
   const userMessages = await takeMessagesByUser(userId);
 
-  return res.json(userMessages);
+  return res.status(200).json({ status: "Ok", userMessages });
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
@@ -39,12 +39,14 @@ router.post("/messages", authMiddleware, async (req, res) => {
   }
 
   await createMessage({ from: req.userId, to, text });
+  
+  console.log("Mensagem enviada com sucesso");
 
-  res.status(200).json({ message: "Mensagem enviada!" });
+  res.status(200).json({ status: "Mensagem OK", message: "Mensagem enviada!" });
 });
 
 router.get("/me", authMiddleware, (req, res) => {
-  res.json({ userId: req.userId });
+  res.status(200).json({ status: "OK", userId: req.userId });
 });
 
 export default router;
