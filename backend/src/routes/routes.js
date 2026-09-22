@@ -14,6 +14,8 @@ router.get("/health", healthCheck);
 router.get("/messages/:userId", authMiddleware, async (req, res) => {
   const { userId } = req.params;
 
+  console.log(`GET /messages/${userId}`);
+
   if (userId !== req.userId) {
     throw new AppError("Acesso negado", 403);
   }
@@ -24,11 +26,13 @@ router.get("/messages/:userId", authMiddleware, async (req, res) => {
 
   const userMessages = await takeMessagesByUser(userId);
 
-  return res.status(200).json({ status: "Ok", userMessages });
+  return res.status(200).json({ userMessages });
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
   const { to, text } = req.body;
+
+  console.log(`POST /messages (de ${req.userId} para ${to})`);
 
   if (!to || !uuidRegex.test(to)) {
     throw new AppError("ID inválido", 400);
@@ -39,14 +43,16 @@ router.post("/messages", authMiddleware, async (req, res) => {
   }
 
   await createMessage({ from: req.userId, to, text });
-  
+
   console.log("Mensagem enviada com sucesso");
 
-  res.status(200).json({ status: "Mensagem OK", message: "Mensagem enviada!" });
+  res.status(200).json({ message: "Mensagem enviada!" });
 });
 
 router.get("/me", authMiddleware, (req, res) => {
-  res.status(200).json({ status: "OK", userId: req.userId });
+  console.log(`GET /me (${req.userId})`);
+
+  res.status(200).json({ userId: req.userId });
 });
 
 export default router;
