@@ -8,20 +8,27 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
   const [feedback, setFeedback] = useState("");
 
   async function getMessages() {
-    const response = await fetch(`http://localhost:3000/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const response = await fetch(`http://localhost:3000/messages/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    const data = await response.json();
+      if (response.status === 401) {
+        onLogout();
+        return;
+      }
 
-    if (!response.ok) {
-      setFeedback(data.message);
-      return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        setFeedback(data.message);
+        return;
+      }
+
+      setMessages(data);
+    } catch (error) {
+      setFeedback("Erro ao conectar com o servidor.");
     }
-
-    setMessages(data);
   }
 
   async function sendMessage() {
@@ -50,11 +57,15 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
 
       const data = await request.json();
 
+      if (request.status === 401) {
+        onLogout();
+        return;
+      }
+
       if (!request.ok) {
         setFeedback(data.message);
         return;
       }
-
       setMessage("");
       setFeedback(data.message);
     } catch (error) {

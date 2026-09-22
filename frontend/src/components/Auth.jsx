@@ -5,20 +5,25 @@ import PaginaPrincipal from "../pages/PaginaPrincipal";
 
 export default function Auth() {
   const [pagina, setPagina] = useState("register");
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
+
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [userId, setUserId] = useState(() => localStorage.getItem("userId"));
 
   function handleAuthSuccess({ token, id }) {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userId", id);
     setToken(token);
     setUserId(id);
   }
 
   function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     setToken(null);
     setUserId(null);
   }
 
-  if (token) {
+  if (token && userId) {
     return (
       <PaginaPrincipal token={token} userId={userId} onLogout={handleLogout} />
     );
