@@ -52,7 +52,7 @@ router.post("/messages", authMiddleware, async (req, res) => {
 });
 
 router.get("/me", authMiddleware, (req, res) => {
-  console.log(`GET /me (${req.userId})`);
+  console.log(`GET /me (${req.userId}) ${new Date().toLocaleString()}`);
 
   res.status(200).json({ userId: req.userId });
 });
