@@ -1,6 +1,6 @@
 import { createMessage, takeMessagesByUser } from "../../data/messages.js";
 import express from "express";
-import healthCheck from "../healthCheck.js";
+import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
