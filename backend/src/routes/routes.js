@@ -14,7 +14,7 @@ router.get("/health", healthCheck);
 router.get("/messages/:userId", authMiddleware, async (req, res) => {
   const { userId } = req.params;
 
-  console.log(`GET /messages/${userId}`);
+  console.log(`GET /messages/${userId} ${new Date().toLocaleString()}`);
 
   if (userId !== req.userId) {
     throw new AppError("Acesso negado", 403);
@@ -32,7 +32,9 @@ router.get("/messages/:userId", authMiddleware, async (req, res) => {
 router.post("/messages", authMiddleware, async (req, res) => {
   const { to, text } = req.body;
 
-  console.log(`POST /messages (de ${req.userId} para ${to})`);
+  console.log(
+    `POST /messages (de ${req.userId} para ${to} ${new Date().toLocaleString()})`,
+  );
 
   if (!to || !uuidRegex.test(to)) {
     throw new AppError("ID inválido", 400);
