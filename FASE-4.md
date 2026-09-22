@@ -12,7 +12,7 @@ Os principais pontos agora são:
 - Mostrar o email dos usuários no frontend, escondendo o UUID da interface principal.
 - Continuar usando o UUID internamente nas requests.
 - Adicionar data e hora às mensagens.
-- Adicionar logs em todas as rotas do backend.
+- Adicionar logs em todas as rotas do backend. [OK]
 - Persistir o login no frontend após refresh. [OK]
 - Parar de deletar mensagens depois da leitura. [OK]
 - Mostrar remetente, data e hora em cada mensagem.
