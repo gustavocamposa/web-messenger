@@ -3,6 +3,7 @@ import express from "express";
 import healthCheck from "../healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { listAvailableUsers } from "../../data/users.js";
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ router.post("/messages", authMiddleware, async (req, res) => {
   }
 
   await createMessage({ from: req.userId, to, text });
-  
+
   console.log("Mensagem enviada com sucesso");
 
   res.status(200).json({ status: "Mensagem OK", message: "Mensagem enviada!" });
@@ -47,6 +48,10 @@ router.post("/messages", authMiddleware, async (req, res) => {
 
 router.get("/me", authMiddleware, (req, res) => {
   res.status(200).json({ status: "OK", userId: req.userId });
+});
+
+router.get("/users", authMiddleware, (req, res) => {
+  return res.json(listAvailableUsers(req.userId));
 });
 
 export default router;

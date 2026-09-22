@@ -10,6 +10,12 @@ function findUserById(id) {
   return db.data.users.find((user) => user.id === id);
 }
 
+function listAvailableUsers(excludeId) {
+  return db.data.users
+    .filter((user) => user.id !== excludeId)
+    .map(({ id, email }) => ({ id, email }));
+}
+
 async function createUser({ email, password }) {
   const id = randomUUID();
   const passwordHash = await bcrypt.hash(password, 10);
@@ -20,4 +26,4 @@ async function createUser({ email, password }) {
   return newUser;
 }
 
-export { findUserByEmail, findUserById, createUser };
+export { findUserByEmail, findUserById, createUser, listAvailableUsers };

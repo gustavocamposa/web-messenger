@@ -1,11 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/style.css";
 
 export default function PaginaPrincipal({ token, userId, onLogout }) {
+  const [users, setUsers] = useState([]);
   const [send, setSend] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [feedback, setFeedback] = useState("");
+
+  useEffect(() => {
+    async function loadUsers() {
+      try {
+        const response = await fetch("http://localhost:3000/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 401) {
+          onLogout();
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setFeedback(data.message);
+          return;
+        }
+
+        setUsers(data);
+      } catch (error) {
+        setFeedback("Erro ao conectar com o servidor.");
+      }
+    }
+
+    loadUsers();
+  }, [token]);
 
   async function getMessages() {
     try {
@@ -25,7 +54,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
         return;
       }
 
-      setMessages(data);
+      setMessages(data.userMessages);
     } catch (error) {
       setFeedback("Erro ao conectar com o servidor.");
     }
@@ -73,17 +102,10 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
     }
   }
 
-  async function copyUserId() {
-    await navigator.clipboard.writeText(userId);
-  }
-
   return (
     <div className="container">
       <div className="card">
         <div className="id-section">
-          <button className="btn btn-secondary" onClick={copyUserId}>
-            Copy ID
-          </button>
           <button className="btn btn-secondary" onClick={onLogout}>
             Logout
           </button>
@@ -91,13 +113,18 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
         </div>
 
         <div className="form-section">
-          <input
+          <select
             className="input"
-            type="text"
             value={send}
             onChange={(e) => setSend(e.target.value)}
-            placeholder="Send To."
-          />
+          >
+            <option value="">Selecione o destinatário</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.email}
+              </option>
+            ))}
+          </select>
           <input
             className="input"
             type="text"
