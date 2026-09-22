@@ -3,6 +3,7 @@ import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { listAvailableUsers } from "../../data/users.js";
 
 const router = express.Router();
 
@@ -55,6 +56,14 @@ router.get("/me", authMiddleware, (req, res) => {
   console.log(`GET /me (${req.userId}) ${new Date().toLocaleString()}`);
 
   res.status(200).json({ userId: req.userId });
+});
+
+router.get("/users", authMiddleware, (req, res) => {
+  console.log(`GET /users (${req.userId}) ${new Date().toLocaleString()}`);
+
+  const availableUsers = listAvailableUsers(req.userId);
+  console.log("Ok");
+  return res.json(availableUsers);
 });
 
 export default router;
