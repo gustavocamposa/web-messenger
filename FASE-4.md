@@ -8,8 +8,8 @@ Os principais pontos agora são:
 
 - Persistir usuários em arquivo JSON. [OK]
 - Manter os usuários mesmo que o backend seja reiniciado. [OK]
-- Buscar usuários disponíveis pelo backend.
-- Mostrar o email dos usuários no frontend, escondendo o UUID da interface principal.
+- Buscar usuários disponíveis pelo backend. [OK]
+- Mostrar o email dos usuários no frontend, escondendo o UUID da interface principal.[OK]
 - Continuar usando o UUID internamente nas requests.
 - Adicionar data e hora às mensagens.
 - Adicionar logs em todas as rotas do backend. [OK]

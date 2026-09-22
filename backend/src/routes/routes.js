@@ -25,7 +25,7 @@ router.get("/messages/:userId", authMiddleware, async (req, res) => {
 
   const userMessages = await takeMessagesByUser(userId);
 
-  return res.status(200).json({ status: "Ok", userMessages });
+  return res.status(200).json({ userMessages });
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
@@ -47,11 +47,16 @@ router.post("/messages", authMiddleware, async (req, res) => {
 });
 
 router.get("/me", authMiddleware, (req, res) => {
-  res.status(200).json({ status: "OK", userId: req.userId });
+  res.status(200).json({ userId: req.userId });
 });
 
 router.get("/users", authMiddleware, (req, res) => {
-  return res.json(listAvailableUsers(req.userId));
+  console.log("GET/Users");
+  const availableUsers = listAvailableUsers(req.userId);
+
+  console.log("Lista ok");
+
+  return res.json(availableUsers);
 });
 
 export default router;

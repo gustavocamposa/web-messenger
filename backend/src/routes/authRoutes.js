@@ -24,7 +24,6 @@ router.post("/register", async (req, res) => {
   console.log("Registro feito com sucesso.");
 
   res.status(201).json({
-    status: "Ok",
     id: userCreated.id,
     email: userCreated.email,
   });
@@ -54,7 +53,6 @@ router.post("/login", async (req, res) => {
   console.log("Login feito com sucesso");
 
   return res.status(200).json({
-    status: "OK",
     token,
     id: user.id,
   });
