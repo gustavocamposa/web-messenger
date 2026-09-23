@@ -3,7 +3,7 @@ import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { listAvailableUsers } from "../../data/users.js";
+import { listAvailableUsers, findUserById } from "../../data/users.js";
 
 const router = express.Router();
 
@@ -17,9 +17,12 @@ router.get("/messages", authMiddleware, (req, res) => {
     `GET /messages (user ${req.userId}) ${new Date().toLocaleString()}`,
   );
 
-  const userMessages = getMessagesByUser(req.userId);
+  const userMessages = getMessagesByUser(req.userId).map((message) => {
+    const sender = findUserById(message.from);
 
-  return res.status(200).json({ userMessages });
+    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido." };
+  });
+  return res.status(200).json(userMessages);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {

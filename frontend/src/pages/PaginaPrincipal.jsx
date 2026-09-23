@@ -38,7 +38,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
 
   async function getMessages() {
     try {
-      const response = await fetch('http://localhost:3000/messages', {
+      const response = await fetch("http://localhost:3000/messages", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -54,7 +54,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
         return;
       }
 
-      setMessages(data.userMessages);
+      setMessages(data);
     } catch (error) {
       setFeedback("Erro ao conectar com o servidor.");
     }
