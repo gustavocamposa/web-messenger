@@ -12,20 +12,12 @@ const uuidRegex =
 
 router.get("/health", healthCheck);
 
-router.get("/messages/:userId", authMiddleware, async (req, res) => {
-  const { userId } = req.params;
+router.get("/messages", authMiddleware, (req, res) => {
+  console.log(
+    `GET /messages (user ${req.userId}) ${new Date().toLocaleString()}`,
+  );
 
-  console.log(`GET /messages/${userId} ${new Date().toLocaleString()}`);
-
-  if (userId !== req.userId) {
-    throw new AppError("Acesso negado", 403);
-  }
-
-  if (!uuidRegex.test(userId)) {
-    throw new AppError("ID inválido", 400);
-  }
-
-  const userMessages = getMessagesByUser(userId);
+  const userMessages = getMessagesByUser(req.userId);
 
   return res.status(200).json({ userMessages });
 });

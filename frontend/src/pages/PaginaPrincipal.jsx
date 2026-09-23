@@ -38,7 +38,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
 
   async function getMessages() {
     try {
-      const response = await fetch(`http://localhost:3000/messages/${userId}`, {
+      const response = await fetch('http://localhost:3000/messages', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
