@@ -17,12 +17,15 @@ router.get("/messages", authMiddleware, (req, res) => {
     `GET /messages (user ${req.userId}) ${new Date().toLocaleString()}`,
   );
 
-  const userMessages = getMessagesByUser(req.userId).map((message) => {
+  const receivedMessages = getMessagesByUser(req.userId);
+
+  const messagesWithSender = receivedMessages.map((message) => {
     const sender = findUserById(message.from);
 
-    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido." };
+    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
   });
-  return res.status(200).json(userMessages);
+
+  return res.status(200).json(messagesWithSender);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
