@@ -1,4 +1,4 @@
-import { createMessage, takeMessagesByUser } from "../../data/messages.js";
+import { createMessage, getMessagesByUser } from "../../data/messages.js";
 import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
@@ -25,7 +25,7 @@ router.get("/messages/:userId", authMiddleware, async (req, res) => {
     throw new AppError("ID inválido", 400);
   }
 
-  const userMessages = await takeMessagesByUser(userId);
+  const userMessages = getMessagesByUser(userId);
 
   return res.status(200).json({ userMessages });
 });
