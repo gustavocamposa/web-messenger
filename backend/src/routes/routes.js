@@ -40,11 +40,15 @@ router.post("/messages", authMiddleware, async (req, res) => {
     throw new AppError("Campo mensagem vazio", 400);
   }
 
-  await createMessage({ from: req.userId, to, text });
+  const createdMessage = await createMessage({ from: req.userId, to, text });
 
   console.log("Mensagem enviada com sucesso");
 
-  res.status(200).json({ message: "Mensagem enviada!" });
+  res.status(201).json({
+    message: "Mensagem enviada!",
+    id: createdMessage.id,
+    createdAt: createdMessage.createdAt,
+  });
 });
 
 router.get("/me", authMiddleware, (req, res) => {
