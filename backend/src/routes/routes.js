@@ -1,9 +1,9 @@
-import { createMessage, takeMessagesByUser } from "../../data/messages.js";
+import { createMessage, getMessagesByUser } from "../../data/messages.js";
 import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { listAvailableUsers } from "../../data/users.js";
+import { listAvailableUsers, findUserById } from "../../data/users.js";
 
 const router = express.Router();
 
@@ -12,22 +12,20 @@ const uuidRegex =
 
 router.get("/health", healthCheck);
 
-router.get("/messages/:userId", authMiddleware, async (req, res) => {
-  const { userId } = req.params;
+router.get("/messages", authMiddleware, (req, res) => {
+  console.log(
+    `GET /messages (user ${req.userId}) ${new Date().toLocaleString()}`,
+  );
 
-  console.log(`GET /messages/${userId} ${new Date().toLocaleString()}`);
+  const receivedMessages = getMessagesByUser(req.userId);
 
-  if (userId !== req.userId) {
-    throw new AppError("Acesso negado", 403);
-  }
+  const messagesWithSender = receivedMessages.map((message) => {
+    const sender = findUserById(message.from);
 
-  if (!uuidRegex.test(userId)) {
-    throw new AppError("ID inválido", 400);
-  }
+    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
+  });
 
-  const userMessages = await takeMessagesByUser(userId);
-
-  return res.status(200).json({ userMessages });
+  return res.status(200).json(messagesWithSender);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
@@ -45,11 +43,15 @@ router.post("/messages", authMiddleware, async (req, res) => {
     throw new AppError("Campo mensagem vazio", 400);
   }
 
-  await createMessage({ from: req.userId, to, text });
+  const createdMessage = await createMessage({ from: req.userId, to, text });
 
   console.log("Mensagem enviada com sucesso");
 
-  res.status(200).json({ message: "Mensagem enviada!" });
+  res.status(201).json({
+    message: "Mensagem enviada!",
+    id: createdMessage.id,
+    createdAt: createdMessage.createdAt,
+  });
 });
 
 router.get("/me", authMiddleware, (req, res) => {

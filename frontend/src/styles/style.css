@@ -98,3 +98,19 @@
   margin-bottom: 0.4rem;
   font-size: 0.9rem;
 }
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.message-meta small {
+  color: #71717a;
+  font-size: 0.75rem;
+}
+
+.message-text {
+  margin: 0.25rem 0 0;
+}

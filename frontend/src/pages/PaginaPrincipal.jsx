@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import "../styles/style.css";
 
+function formatDate(isoString) {
+  if (!isoString) {
+    return "Data desconhecida";
+  }
+
+  return new Date(isoString).toLocaleString("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
 export default function PaginaPrincipal({ token, userId, onLogout }) {
   const [users, setUsers] = useState([]);
   const [send, setSend] = useState("");
@@ -38,7 +49,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
 
   async function getMessages() {
     try {
-      const response = await fetch(`http://localhost:3000/messages/${userId}`, {
+      const response = await fetch("http://localhost:3000/messages", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -54,7 +65,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
         return;
       }
 
-      setMessages(data.userMessages);
+      setMessages(data);
     } catch (error) {
       setFeedback("Erro ao conectar com o servidor.");
     }
@@ -145,10 +156,14 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
               Check Messages
             </button>
           </div>
-          {messages.map((message, index) => (
-            <p className="message-item" key={index}>
-              <strong>{message.from}:</strong> {message.text}
-            </p>
+          {messages.map((message) => (
+            <div className="message-item" key={message.id}>
+              <div className="message-meta">
+                <strong>{message.fromEmail}</strong>
+                <small>{formatDate(message.createdAt)}</small>
+              </div>
+              <p className="message-text">{message.text}</p>
+            </div>
           ))}
         </div>
       </div>
