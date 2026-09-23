@@ -12,7 +12,7 @@ function formatDate(isoString) {
   });
 }
 
-export default function PaginaPrincipal({ token, userId, onLogout }) {
+export default function PaginaPrincipal({ token, user, onLogout }) {
   const [users, setUsers] = useState([]);
   const [send, setSend] = useState("");
   const [message, setMessage] = useState("");
@@ -120,7 +120,9 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
           <button className="btn btn-secondary" onClick={onLogout}>
             Logout
           </button>
-          <p className="user-id">Your ID: {userId}</p>
+          <p className="user-id">
+            Logged in as <strong>{user.email}</strong>
+          </p>
         </div>
 
         <div className="form-section">

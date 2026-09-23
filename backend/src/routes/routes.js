@@ -57,7 +57,13 @@ router.post("/messages", authMiddleware, async (req, res) => {
 router.get("/me", authMiddleware, (req, res) => {
   console.log(`GET /me (${req.userId}) ${new Date().toLocaleString()}`);
 
-  res.status(200).json({ userId: req.userId });
+  const user = findUserById(req.userId);
+
+  if (!user) {
+    throw new AppError("Usuário não encontrado", 401);
+  }
+
+  res.status(200).json({ id: user.id, email: user.email });
 });
 
 router.get("/users", authMiddleware, (req, res) => {
