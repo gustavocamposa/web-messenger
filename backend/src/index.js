@@ -27,6 +27,7 @@ wss.on("connection", (socket) => {
     console.log("Cliente desconectou");
   });
 });
+
 app.use(cors());
 app.use(express.json());
 
