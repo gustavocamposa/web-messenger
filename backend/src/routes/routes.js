@@ -1,9 +1,9 @@
-import { createMessage, getMessagesByUser } from "../../data/messages.js";
+import { createMessage, getMessagesByUser } from "../../database/messages.js";
 import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { listAvailableUsers, findUserById } from "../../data/users.js";
+import { listAvailableUsers, findUserById } from "../../database/users.js";
 import { sendToUser } from "../websocket.js";
 
 const router = express.Router();

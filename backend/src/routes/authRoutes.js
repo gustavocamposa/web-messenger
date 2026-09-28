@@ -1,6 +1,6 @@
 import express from "express";
 import bcrypt from "bcryptjs";
-import { findUserByEmail, createUser } from "../../data/users.js";
+import { findUserByEmail, createUser } from "../../database/users.js";
 import { AppError } from "../errors/AppError.js";
 import { generateToken } from "../utils/token.js";
 
