@@ -47,6 +47,34 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
     loadUsers();
   }, [token]);
 
+  useEffect(() => {
+    const ws = new WebSocket(`ws://localhost:3000?token=${token}`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type !== "message:new") {
+        return;
+      }
+
+      const newMessage = data.message;
+
+      if (newMessage.to !== userId) {
+        return;
+      }
+
+      setMessages((current) => {
+        const alreadyExists = current.some((m) => m.id === newMessage.id);
+        if (alreadyExists) {
+          return current;
+        }
+        return [...current, newMessage];
+      });
+    };
+
+    return () => ws.close();
+  }, [token, userId]);
+
   async function getMessages() {
     try {
       const response = await fetch("http://localhost:3000/messages", {
