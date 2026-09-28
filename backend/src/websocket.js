@@ -12,7 +12,7 @@ export function setupWebSocket(server) {
     const token = searchParams.get("token");
 
     let user;
-
+    // codigo 1008 = codigo padrão do websocket para esses tratamentos de erro.
     try {
       const payload = verifyToken(token);
       user = findUserById(payload.id);
