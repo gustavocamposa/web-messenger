@@ -50,6 +50,8 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
   useEffect(() => {
     const ws = new WebSocket(`ws://localhost:3000?token=${token}`);
 
+    ws.onopen = () => getMessages();
+
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
@@ -180,9 +182,6 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
         <div className="messages">
           <div className="messages-header">
             <h3>Messages</h3>
-            <button className="btn btn-secondary" onClick={getMessages}>
-              Check Messages
-            </button>
           </div>
           {messages.map((message) => (
             <div className="message-item" key={message.id}>
