@@ -54,15 +54,10 @@ router.post("/messages", authMiddleware, async (req, res) => {
   };
 
   sendToUser(to, event);
-  sendToUser(req.userId, event);
 
   console.log("Mensagem enviada com sucesso");
 
-  res.status(201).json({
-    message: "Mensagem enviada!",
-    id: createdMessage.id,
-    createdAt: createdMessage.createdAt,
-  });
+  res.status(201).json(event.message);
 });
 
 router.get("/me", authMiddleware, (req, res) => {
