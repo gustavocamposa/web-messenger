@@ -4,6 +4,7 @@ import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { listAvailableUsers, findUserById } from "../../data/users.js";
+import { sendToUser } from "../websocket.js";
 
 const router = express.Router();
 
@@ -44,6 +45,16 @@ router.post("/messages", authMiddleware, async (req, res) => {
   }
 
   const createdMessage = await createMessage({ from: req.userId, to, text });
+
+  const sender = findUserById(req.userId);
+
+  const event = {
+    type: "message:new",
+    message: { ...createdMessage, fromEmail: sender.email },
+  };
+
+  sendToUser(to, event);
+  sendToUser(req.userId, event);
 
   console.log("Mensagem enviada com sucesso");
 

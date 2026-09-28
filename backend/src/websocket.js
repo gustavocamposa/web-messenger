@@ -47,3 +47,17 @@ export function setupWebSocket(server) {
     });
   });
 }
+
+export function sendToUser(userId, event) {
+  const sockets = connections.get(userId);
+
+  if (!sockets) {
+    return;
+  }
+
+  const data = JSON.stringify(event);
+
+  for (const socket of sockets) {
+    socket.send(data);
+  }
+}
