@@ -48,19 +48,7 @@ router.get("/conversations/:contactId/messages", authMiddleware, (req, res) => {
 
   const messages = getConversation(req.userId, contactId);
 
-  const me = findUserById(req.userId);
-
-  const emails = {
-    [me.id]: me.email,
-    [contact.id]: contact.email,
-  };
-
-  const messagesWithSender = messages.map((message) => ({
-    ...message,
-    fromEmail: emails[message.from],
-  }));
-
-  return res.status(200).json(messagesWithSender);
+  return res.status(200).json(messages);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
