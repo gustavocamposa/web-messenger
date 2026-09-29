@@ -33,26 +33,32 @@ router.get("/messages", authMiddleware, (req, res) => {
   return res.status(200).json(messagesWithSender);
 });
 
-router.get("/conversations/:userId/messages", authMiddleware, (req, res) => {
-  const otherUserId = req.params.userId;
+router.get("/conversations/:contactId/messages", authMiddleware, (req, res) => {
+  const contactId = req.params.contactId;
 
-  if (!uuidRegex.test(otherUserId)) {
+  if (!uuidRegex.test(contactId)) {
     throw new AppError("Não é um UUID válido", 400);
   }
 
-  const otherUser = findUserById(otherUserId);
+  const contact = findUserById(contactId);
 
-  if (!otherUser) {
+  if (!contact) {
     throw new AppError("Usuário não existe", 404);
   }
 
-  const messages = getConversation(req.userId, otherUserId);
+  const messages = getConversation(req.userId, contactId);
 
-  const messagesWithSender = messages.map((message) => {
-    const sender = findUserById(message.from);
+  const me = findUserById(req.userId);
 
-    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
-  });
+  const emails = {
+    [me.id]: me.email,
+    [contact.id]: contact.email,
+  };
+
+  const messagesWithSender = messages.map((message) => ({
+    ...message,
+    fromEmail: emails[message.from],
+  }));
 
   return res.status(200).json(messagesWithSender);
 });
