@@ -1,4 +1,8 @@
-import { createMessage, getMessagesByUser } from "../../database/messages.js";
+import {
+  createMessage,
+  getMessagesByUser,
+  getConversation,
+} from "../../database/messages.js";
 import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
@@ -21,6 +25,30 @@ router.get("/messages", authMiddleware, (req, res) => {
   const receivedMessages = getMessagesByUser(req.userId);
 
   const messagesWithSender = receivedMessages.map((message) => {
+    const sender = findUserById(message.from);
+
+    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
+  });
+
+  return res.status(200).json(messagesWithSender);
+});
+
+router.get("/conversations/:userId/messages", authMiddleware, (req, res) => {
+  const otherUserId = req.params.userId;
+
+  if (!uuidRegex.test(otherUserId)) {
+    throw new AppError("Não é um UUID válido", 400);
+  }
+
+  const otherUser = findUserById(otherUserId);
+
+  if (!otherUser) {
+    throw new AppError("Usuário não existe", 404);
+  }
+
+  const messages = getConversation(req.userId, otherUserId);
+
+  const messagesWithSender = messages.map((message) => {
     const sender = findUserById(message.from);
 
     return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
