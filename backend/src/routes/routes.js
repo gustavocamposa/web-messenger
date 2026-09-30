@@ -48,7 +48,14 @@ router.get("/conversations/:contactId/messages", authMiddleware, (req, res) => {
 
   const messages = getConversation(req.userId, contactId);
 
-  return res.status(200).json(messages);
+  const messagesWithSender = [];
+
+  messages.forEach((message) => {
+    const sender = findUserById(message.from);
+    message.fromEmail = sender?.email ?? "Usuário desconhecido";
+  });
+
+  return res.status(200).json(messagesWithSender);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
