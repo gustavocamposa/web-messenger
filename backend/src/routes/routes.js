@@ -1,9 +1,13 @@
-import { createMessage, getMessagesByUser } from "../../data/messages.js";
+import {
+  createMessage,
+  getMessagesByUser,
+  getConversation,
+} from "../../database/messages.js";
 import express from "express";
 import healthCheck from "./healthCheck.js";
 import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { listAvailableUsers, findUserById } from "../../data/users.js";
+import { listAvailableUsers, findUserById } from "../../database/users.js";
 import { sendToUser } from "../websocket.js";
 
 const router = express.Router();
@@ -24,6 +28,31 @@ router.get("/messages", authMiddleware, (req, res) => {
     const sender = findUserById(message.from);
 
     return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
+  });
+
+  return res.status(200).json(messagesWithSender);
+});
+
+router.get("/conversations/:contactId/messages", authMiddleware, (req, res) => {
+  const contactId = req.params.contactId;
+
+  if (!uuidRegex.test(contactId)) {
+    throw new AppError("Não é um UUID válido", 400);
+  }
+
+  const contact = findUserById(contactId);
+
+  if (!contact) {
+    throw new AppError("Usuário não existe", 404);
+  }
+
+  const messages = getConversation(req.userId, contactId);
+
+  const messagesWithSender = [];
+
+  messages.forEach((message) => {
+    const sender = findUserById(message.from);
+    message.fromEmail = sender?.email ?? "Usuário desconhecido";
   });
 
   return res.status(200).json(messagesWithSender);

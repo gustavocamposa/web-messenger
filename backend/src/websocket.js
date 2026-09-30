@@ -1,6 +1,6 @@
 import { WebSocketServer } from "ws";
 import { verifyToken } from "./utils/token.js";
-import { findUserById } from "../data/users.js";
+import { findUserById } from "../database/users.js";
 
 const connections = new Map();
 
