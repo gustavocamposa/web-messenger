@@ -1,9 +1,10 @@
 import { useEffect } from "react";
+import { API_URL } from "../config";
 
 export default function HealthCheck() {
   useEffect(() => {
     const checkHealth = () => {
-      fetch("http://localhost:3000/health")
+      fetch(`${API_URL}/health`)
         .then((response) => response.json())
         .then((data) => {
           console.log("Health Check:", data);

@@ -30,7 +30,9 @@ O projeto foi construído em fases (veja os arquivos `FASE-1.md` a `FASE-5.md`),
 - Recebimento de mensagens em tempo real por WebSocket
 - Mensagens e usuários persistidos em PostgreSQL (Drizzle ORM, com migrations)
 - Validação dos dados na API (destinatário existente com UUID válido, texto não vazio e com até 2000 caracteres)
-- Tratamento centralizado de erros (`AppError` + middleware)
+- Tratamento centralizado de erros (`AppError` + middleware), sem expor detalhes internos em erros `500`
+- Limite de tentativas no login e no cadastro (20 a cada 15 minutos por IP)
+- CORS restrito ao domínio do frontend em produção
 - Endpoint de Health Check, consultado pelo frontend a cada 1 minuto
 - Sessão encerrada automaticamente quando a API retorna `401`
 
@@ -161,6 +163,47 @@ O frontend fica disponível em `http://localhost:5173`.
 3. Em uma conta, selecione a outra como destinatário e envie uma mensagem.
 4. A mensagem aparece na outra aba sem recarregar a página.
 
+## Deploy
+
+O frontend é um site estático e pode ir para a Vercel. O backend precisa de um servidor que mantenha conexões WebSocket abertas, por isso vai para o Render (ou Railway), e o banco para o Neon (ou outro PostgreSQL gerenciado).
+
+### 1. Banco (Neon)
+
+Crie um projeto e copie a connection string (termina com `?sslmode=require`).
+
+### 2. Backend (Render)
+
+Crie um **Web Service** a partir do repositório:
+
+| Campo | Valor |
+| --- | --- |
+| Root Directory | `backend` |
+| Build Command | `npm install && npm run build` |
+| Start Command | `npm run db:migrate && npm start` |
+
+Variáveis de ambiente:
+
+| Variável | Valor |
+| --- | --- |
+| `DATABASE_URL` | Connection string do Neon |
+| `JWT_SECRET` | Um segredo novo e aleatório |
+| `CORS_ORIGIN` | URL do frontend na Vercel (ex.: `https://web-messenger.vercel.app`) |
+| `TRUST_PROXY` | Número de proxies na frente do app (comece com `1`) |
+
+O `PORT` é definido pelo próprio Render. Depois do deploy, abra `/ip` no endereço do backend e compare com o seu IP em [api.ipify.org](https://api.ipify.org). Se forem diferentes, aumente o `TRUST_PROXY` até ficarem iguais; sem isso, o limite de tentativas pode tratar todos os visitantes como se fossem um só.
+
+No plano gratuito o backend hiberna após alguns minutos sem uso, e o primeiro acesso depois disso pode levar até um minuto.
+
+### 3. Frontend (Vercel)
+
+Importe o repositório com **Root Directory** `frontend` (o Vite é detectado automaticamente) e defina:
+
+| Variável | Valor |
+| --- | --- |
+| `VITE_API_URL` | URL do backend no Render (ex.: `https://web-messenger-api.onrender.com`) |
+
+O endereço do WebSocket é montado a partir dela (`https://` vira `wss://`). Variáveis `VITE_` são lidas no momento do build, então depois de alterá-las é preciso fazer um novo deploy na Vercel.
+
 ## API
 
 ### Rotas públicas
@@ -168,6 +211,7 @@ O frontend fica disponível em `http://localhost:5173`.
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | `GET` | `/health` | Estado da API |
+| `GET` | `/ip` | IP do visitante como o servidor o enxerga (para conferir o `TRUST_PROXY`) |
 | `POST` | `/register` | Cria uma conta |
 | `POST` | `/login` | Autentica e retorna o token |
 
@@ -192,7 +236,7 @@ Resposta `201`:
 { "id": "uuid-do-usuario", "email": "ana@email.com" }
 ```
 
-Erros: `400` (campos ausentes) e `409` (email já cadastrado).
+Erros: `400` (campos ausentes), `409` (email já cadastrado) e `429` (muitas tentativas).
 
 **`POST /login`**
 
@@ -202,7 +246,7 @@ Mesmo corpo do registro. Resposta `200`:
 { "token": "jwt...", "id": "uuid-do-usuario" }
 ```
 
-Erros: `400` (campos ausentes) e `401` (credenciais inválidas).
+Erros: `400` (campos ausentes), `401` (credenciais inválidas) e `429` (muitas tentativas).
 
 ### Rotas protegidas
 
@@ -255,10 +299,9 @@ Um mesmo usuário pode estar conectado em várias abas ao mesmo tempo, e todas r
 
 ## Limitações conhecidas
 
-- A URL da API está fixa em `localhost:3000` no frontend.
+- O token vai na URL do WebSocket (`?token=`), o que pode deixá-lo em logs de proxies.
 - O frontend ainda está em JavaScript.
 - Ainda não há testes automatizados.
-- Ainda não há deploy.
 
 ## Próximos passos
 
@@ -266,7 +309,7 @@ Um mesmo usuário pode estar conectado em várias abas ao mesmo tempo, e todas r
 - [ ] Presença online/offline em tempo real
 - [ ] Middleware de logging centralizado
 - [x] Porta do backend configurável (`PORT`)
-- [ ] Variável de ambiente para a URL da API no frontend
+- [x] Variável de ambiente para a URL da API no frontend
 - [x] Limite de 2000 caracteres por mensagem
 - [ ] Validações adicionais (formato de email, tamanho de senha)
 - [x] Migração do backend para TypeScript
@@ -274,6 +317,7 @@ Um mesmo usuário pode estar conectado em várias abas ao mesmo tempo, e todas r
 - [x] Banco de dados PostgreSQL com Drizzle
 - [ ] Testes automatizados
 - [x] PostgreSQL com Docker Compose
+- [x] Preparação para deploy (CORS, limite de tentativas, erros genéricos)
 - [ ] CI com GitHub Actions
 - [ ] Deploy
 
