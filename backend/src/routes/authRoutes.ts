@@ -4,10 +4,15 @@ import { findUserByEmail, createUser } from "../../data/users.js";
 import { AppError } from "../errors/AppError.js";
 import { generateToken } from "../utils/token.js";
 
+interface AuthBody {
+  email?: string;
+  password?: string;
+}
+
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body as AuthBody;
 
   console.log(`POST /register (${email}) ${new Date().toLocaleString()}`);
 
@@ -15,13 +20,11 @@ router.post("/register", async (req, res) => {
     throw new AppError("Email ou senha não informados", 400);
   }
 
-  const userExists = findUserByEmail(email);
+  const userCreated = await createUser({ email, password });
 
-  if (userExists) {
+  if (!userCreated) {
     throw new AppError("Email já cadastrado", 409);
   }
-
-  const userCreated = await createUser({ email, password });
 
   console.log("Registro feito com sucesso.");
 
@@ -32,7 +35,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body as AuthBody;
 
   console.log(`POST /login (${email}) ${new Date().toLocaleString()}`);
 
@@ -40,16 +43,17 @@ router.post("/login", async (req, res) => {
     throw new AppError("Email ou senha não informados", 400);
   }
 
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email);
 
+  // Mesma mensagem para email e senha errados, para não revelar quais emails existem.
   if (!user) {
-    throw new AppError("Email incorreto", 401);
+    throw new AppError("Credenciais inválidas", 401);
   }
 
   const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
 
   if (passwordCorrect === false) {
-    throw new AppError("Senha incorreta", 401);
+    throw new AppError("Credenciais inválidas", 401);
   }
 
   const token = generateToken(user.id);

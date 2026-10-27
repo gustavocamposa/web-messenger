@@ -22,6 +22,8 @@ app.use(authRoutes);
 
 app.use(errorMiddleware);
 
-server.listen(3000, () => {
-  console.log("Servidor rodando!");
+const port = Number(process.env.PORT) || 3000;
+
+server.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}!`);
 });
