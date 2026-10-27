@@ -47,14 +47,15 @@ router.post("/login", async (req, res) => {
 
   const user = findUserByEmail(email);
 
+  // Mesma mensagem para email e senha errados, para não revelar quais emails existem.
   if (!user) {
-    throw new AppError("Email incorreto", 401);
+    throw new AppError("Credenciais inválidas", 401);
   }
 
   const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
 
   if (passwordCorrect === false) {
-    throw new AppError("Senha incorreta", 401);
+    throw new AppError("Credenciais inválidas", 401);
   }
 
   const token = generateToken(user.id);
