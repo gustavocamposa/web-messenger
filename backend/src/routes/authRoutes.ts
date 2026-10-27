@@ -4,10 +4,15 @@ import { findUserByEmail, createUser } from "../../data/users.js";
 import { AppError } from "../errors/AppError.js";
 import { generateToken } from "../utils/token.js";
 
+interface AuthBody {
+  email?: string;
+  password?: string;
+}
+
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body as AuthBody;
 
   console.log(`POST /register (${email}) ${new Date().toLocaleString()}`);
 
@@ -32,7 +37,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body as AuthBody;
 
   console.log(`POST /login (${email}) ${new Date().toLocaleString()}`);
 

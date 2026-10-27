@@ -1,6 +1,7 @@
+import type { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../utils/token.js";
 
-function authMiddleware(req, res, next) {
+function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {

@@ -1,8 +1,11 @@
 import { randomUUID } from "crypto";
 import db from "./db.js";
+import type { Message } from "../src/types.js";
 
-async function createMessage({ from, to, text }) {
-  const message = {
+type NewMessage = Pick<Message, "from" | "to" | "text">;
+
+async function createMessage({ from, to, text }: NewMessage): Promise<Message> {
+  const message: Message = {
     id: randomUUID(),
     from,
     to,
@@ -15,7 +18,7 @@ async function createMessage({ from, to, text }) {
   return message;
 }
 
-function getMessagesByUser(userId) {
+function getMessagesByUser(userId: string): Message[] {
   return db.data.messages.filter((message) => message.to === userId);
 }
 

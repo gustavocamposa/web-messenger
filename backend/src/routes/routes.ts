@@ -5,6 +5,12 @@ import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { listAvailableUsers, findUserById } from "../../data/users.js";
 import { sendToUser } from "../websocket.js";
+import type { MessageWithSender, NewMessageEvent } from "../types.js";
+
+interface SendMessageBody {
+  to?: string;
+  text?: string;
+}
 
 const router = express.Router();
 
@@ -20,17 +26,22 @@ router.get("/messages", authMiddleware, (req, res) => {
 
   const receivedMessages = getMessagesByUser(req.userId);
 
-  const messagesWithSender = receivedMessages.map((message) => {
-    const sender = findUserById(message.from);
+  const messagesWithSender: MessageWithSender[] = receivedMessages.map(
+    (message) => {
+      const sender = findUserById(message.from);
 
-    return { ...message, fromEmail: sender?.email ?? "Usuário desconhecido" };
-  });
+      return {
+        ...message,
+        fromEmail: sender?.email ?? "Usuário desconhecido",
+      };
+    },
+  );
 
   return res.status(200).json(messagesWithSender);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
-  const { to, text } = req.body;
+  const { to, text } = req.body as SendMessageBody;
 
   console.log(
     `POST /messages (de ${req.userId} para ${to} ${new Date().toLocaleString()})`,
@@ -48,9 +59,12 @@ router.post("/messages", authMiddleware, async (req, res) => {
 
   const sender = findUserById(req.userId);
 
-  const event = {
+  const event: NewMessageEvent = {
     type: "message:new",
-    message: { ...createdMessage, fromEmail: sender.email },
+    message: {
+      ...createdMessage,
+      fromEmail: sender?.email ?? "Usuário desconhecido",
+    },
   };
 
   sendToUser(to, event);
