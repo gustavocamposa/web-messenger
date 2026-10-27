@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { findUserByEmail, createUser } from "../../data/users.js";
 import { AppError } from "../errors/AppError.js";
 import { generateToken } from "../utils/token.js";
+import authRateLimit from "../middleware/rateLimitMiddleware.js";
 
 interface AuthBody {
   email?: string;
@@ -11,7 +12,7 @@ interface AuthBody {
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register", authRateLimit, async (req, res) => {
   const { email, password } = req.body as AuthBody;
 
   console.log(`POST /register (${email}) ${new Date().toLocaleString()}`);
@@ -34,7 +35,7 @@ router.post("/register", async (req, res) => {
   });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", authRateLimit, async (req, res) => {
   const { email, password } = req.body as AuthBody;
 
   console.log(`POST /login (${email}) ${new Date().toLocaleString()}`);

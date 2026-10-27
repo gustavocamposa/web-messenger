@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../config";
 
 export default function Register({ onRegisterSucess, onGoToLogin }) {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export default function Register({ onRegisterSucess, onGoToLogin }) {
     }
 
     try {
-      const request = await fetch("http://localhost:3000/register", {
+      const request = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export default function Register({ onRegisterSucess, onGoToLogin }) {
         return;
       }
 
-      const loginRequest = await fetch("http://localhost:3000/login", {
+      const loginRequest = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

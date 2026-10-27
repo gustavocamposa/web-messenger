@@ -20,6 +20,12 @@ const uuidRegex =
 
 router.get("/health", healthCheck);
 
+// Mostra o IP que o servidor enxerga para quem chamou; serve para conferir o TRUST_PROXY
+// depois do deploy (deve ser igual ao IP mostrado em https://api.ipify.org).
+router.get("/ip", (req, res) => {
+  res.status(200).json({ ip: req.ip });
+});
+
 router.get("/messages", authMiddleware, async (req, res) => {
   console.log(
     `GET /messages (user ${req.userId}) ${new Date().toLocaleString()}`,

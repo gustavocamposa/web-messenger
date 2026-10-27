@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../styles/style.css";
+import { API_URL, WS_URL } from "../config";
 
 function formatDate(isoString) {
   if (!isoString) {
@@ -22,7 +23,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
   useEffect(() => {
     async function loadUsers() {
       try {
-        const response = await fetch("http://localhost:3000/users", {
+        const response = await fetch(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -48,7 +49,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
   }, [token]);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:3000?token=${token}`);
+    const ws = new WebSocket(`${WS_URL}?token=${token}`);
 
     ws.onopen = () => getMessages();
 
@@ -79,7 +80,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
 
   async function getMessages() {
     try {
-      const response = await fetch("http://localhost:3000/messages", {
+      const response = await fetch(`${API_URL}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -113,7 +114,7 @@ export default function PaginaPrincipal({ token, userId, onLogout }) {
     }
 
     try {
-      const request = await fetch("http://localhost:3000/messages", {
+      const request = await fetch(`${API_URL}/messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
