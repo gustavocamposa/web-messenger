@@ -9,22 +9,35 @@ const connections = new Map<string, Set<WebSocket>>();
 export function setupWebSocket(server: Server) {
   const wss = new WebSocketServer({ server });
 
-  wss.on("connection", (socket, request) => {
+  wss.on("connection", async (socket, request) => {
     const { searchParams } = new URL(request.url ?? "", "http://localhost");
     const token = searchParams.get("token") ?? "";
 
-    let user: User | undefined;
+    let userId: string;
     // codigo 1008 = codigo padrão do websocket para esses tratamentos de erro.
     try {
-      const payload = verifyToken(token);
-      user = findUserById(payload.id);
+      userId = verifyToken(token).id;
     } catch (error) {
       socket.close(1008, "Token inválido");
       return;
     }
 
+    let user: User | undefined;
+    try {
+      user = await findUserById(userId);
+    } catch (error) {
+      console.error("Erro ao buscar usuário do WebSocket:", error);
+      socket.close(1011, "Erro interno do servidor");
+      return;
+    }
+
     if (!user) {
       socket.close(1008, "Usuário não encontrado");
+      return;
+    }
+
+    // O cliente pode ter desconectado enquanto buscávamos o usuário no banco.
+    if (socket.readyState !== socket.OPEN) {
       return;
     }
 

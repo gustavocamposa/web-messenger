@@ -5,7 +5,8 @@ import { AppError } from "../errors/AppError.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { listAvailableUsers, findUserById } from "../../data/users.js";
 import { sendToUser } from "../websocket.js";
-import type { MessageWithSender, NewMessageEvent } from "../types.js";
+import { MESSAGE_MAX_LENGTH } from "../../data/schema.js";
+import type { NewMessageEvent } from "../types.js";
 
 interface SendMessageBody {
   to?: string;
@@ -19,25 +20,14 @@ const uuidRegex =
 
 router.get("/health", healthCheck);
 
-router.get("/messages", authMiddleware, (req, res) => {
+router.get("/messages", authMiddleware, async (req, res) => {
   console.log(
     `GET /messages (user ${req.userId}) ${new Date().toLocaleString()}`,
   );
 
-  const receivedMessages = getMessagesByUser(req.userId);
+  const receivedMessages = await getMessagesByUser(req.userId);
 
-  const messagesWithSender: MessageWithSender[] = receivedMessages.map(
-    (message) => {
-      const sender = findUserById(message.from);
-
-      return {
-        ...message,
-        fromEmail: sender?.email ?? "Usuário desconhecido",
-      };
-    },
-  );
-
-  return res.status(200).json(messagesWithSender);
+  return res.status(200).json(receivedMessages);
 });
 
 router.post("/messages", authMiddleware, async (req, res) => {
@@ -55,9 +45,22 @@ router.post("/messages", authMiddleware, async (req, res) => {
     throw new AppError("Campo mensagem vazio", 400);
   }
 
+  if (text.length > MESSAGE_MAX_LENGTH) {
+    throw new AppError(
+      `Mensagem deve ter no máximo ${MESSAGE_MAX_LENGTH} caracteres`,
+      400,
+    );
+  }
+
+  const recipient = await findUserById(to);
+
+  if (!recipient) {
+    throw new AppError("Destinatário não encontrado", 404);
+  }
+
   const createdMessage = await createMessage({ from: req.userId, to, text });
 
-  const sender = findUserById(req.userId);
+  const sender = await findUserById(req.userId);
 
   const event: NewMessageEvent = {
     type: "message:new",
@@ -80,10 +83,10 @@ router.get("/me", authMiddleware, (req, res) => {
   res.status(200).json({ userId: req.userId });
 });
 
-router.get("/users", authMiddleware, (req, res) => {
+router.get("/users", authMiddleware, async (req, res) => {
   console.log(`GET /users (${req.userId}) ${new Date().toLocaleString()}`);
 
-  const availableUsers = listAvailableUsers(req.userId);
+  const availableUsers = await listAvailableUsers(req.userId);
   console.log("Ok");
   return res.json(availableUsers);
 });

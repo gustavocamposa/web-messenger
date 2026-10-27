@@ -8,6 +8,9 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "node dist/src/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,9 +21,10 @@
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.4",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "lowdb": "^7.0.1",
+    "pg": "^8.23.1",
     "ws": "^8.21.3"
   },
   "devDependencies": {
@@ -28,7 +32,9 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
     "@types/ws": "^8.18.2",
+    "drizzle-kit": "^0.31.11",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

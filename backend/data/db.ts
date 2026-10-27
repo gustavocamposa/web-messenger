@@ -1,8 +1,15 @@
-import { JSONFilePreset } from "lowdb/node";
-import type { DatabaseSchema } from "../src/types.js";
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
+import * as schema from "./schema.js";
 
-const defaultData: DatabaseSchema = { users: [], messages: [] };
+const connectionString = process.env.DATABASE_URL;
 
-const db = await JSONFilePreset<DatabaseSchema>("./db.json", defaultData);
+if (!connectionString) {
+  throw new Error("DATABASE_URL não definido no .env");
+}
+
+const pool = new pg.Pool({ connectionString });
+
+const db = drizzle(pool, { schema });
 
 export default db;

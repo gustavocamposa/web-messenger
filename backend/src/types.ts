@@ -1,18 +1,10 @@
-export interface User {
-  id: string;
-  email: string;
-  passwordHash: string;
-}
+import type { messages, users } from "../data/schema.js";
+
+export type User = typeof users.$inferSelect;
 
 export type PublicUser = Pick<User, "id" | "email">;
 
-export interface Message {
-  id: string;
-  from: string;
-  to: string;
-  text: string;
-  createdAt: string;
-}
+export type Message = typeof messages.$inferSelect;
 
 export interface MessageWithSender extends Message {
   fromEmail: string;
@@ -24,8 +16,3 @@ export interface NewMessageEvent {
 }
 
 export type ServerEvent = NewMessageEvent;
-
-export interface DatabaseSchema {
-  users: User[];
-  messages: Message[];
-}

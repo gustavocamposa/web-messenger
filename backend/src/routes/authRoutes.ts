@@ -20,13 +20,11 @@ router.post("/register", async (req, res) => {
     throw new AppError("Email ou senha não informados", 400);
   }
 
-  const userExists = findUserByEmail(email);
+  const userCreated = await createUser({ email, password });
 
-  if (userExists) {
+  if (!userCreated) {
     throw new AppError("Email já cadastrado", 409);
   }
-
-  const userCreated = await createUser({ email, password });
 
   console.log("Registro feito com sucesso.");
 
@@ -45,7 +43,7 @@ router.post("/login", async (req, res) => {
     throw new AppError("Email ou senha não informados", 400);
   }
 
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email);
 
   // Mesma mensagem para email e senha errados, para não revelar quais emails existem.
   if (!user) {

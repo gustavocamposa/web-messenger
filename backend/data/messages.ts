@@ -1,25 +1,26 @@
-import { randomUUID } from "crypto";
+import { asc, eq, getTableColumns } from "drizzle-orm";
 import db from "./db.js";
-import type { Message } from "../src/types.js";
+import { messages, users } from "./schema.js";
+import type { Message, MessageWithSender } from "../src/types.js";
 
 type NewMessage = Pick<Message, "from" | "to" | "text">;
 
 async function createMessage({ from, to, text }: NewMessage): Promise<Message> {
-  const message: Message = {
-    id: randomUUID(),
-    from,
-    to,
-    text,
-    createdAt: new Date().toISOString(),
-  };
-
-  await db.update(({ messages }) => messages.push(message));
+  const [message] = await db
+    .insert(messages)
+    .values({ from, to, text })
+    .returning();
 
   return message;
 }
 
-function getMessagesByUser(userId: string): Message[] {
-  return db.data.messages.filter((message) => message.to === userId);
+async function getMessagesByUser(userId: string): Promise<MessageWithSender[]> {
+  return db
+    .select({ ...getTableColumns(messages), fromEmail: users.email })
+    .from(messages)
+    .innerJoin(users, eq(messages.from, users.id))
+    .where(eq(messages.to, userId))
+    .orderBy(asc(messages.createdAt));
 }
 
 export { createMessage, getMessagesByUser };

@@ -28,8 +28,8 @@ O projeto foi construído em fases (veja os arquivos `FASE-1.md` a `FASE-5.md`),
 - Lista de usuários disponíveis, sem incluir o próprio usuário
 - Envio de mensagens para outro usuário
 - Recebimento de mensagens em tempo real por WebSocket
-- Mensagens e usuários persistidos em arquivo JSON (`lowdb`)
-- Validação dos dados na API (destinatário com UUID válido, texto não vazio)
+- Mensagens e usuários persistidos em PostgreSQL (Drizzle ORM, com migrations)
+- Validação dos dados na API (destinatário existente com UUID válido, texto não vazio e com até 2000 caracteres)
 - Tratamento centralizado de erros (`AppError` + middleware)
 - Endpoint de Health Check, consultado pelo frontend a cada 1 minuto
 - Sessão encerrada automaticamente quando a API retorna `401`
@@ -47,11 +47,13 @@ O projeto foi construído em fases (veja os arquivos `FASE-1.md` a `FASE-5.md`),
 **Backend**
 
 - Node.js
+- TypeScript (`tsx` em desenvolvimento, `tsc` no build)
 - Express 5
 - WebSocket (`ws`)
 - JWT (`jsonwebtoken`)
 - `bcryptjs`
-- LowDB (persistência em JSON)
+- PostgreSQL 17 (via Docker Compose)
+- Drizzle ORM e Drizzle Kit (schema e migrations)
 - `dotenv` e `cors`
 
 ## Estrutura do projeto
@@ -59,15 +61,19 @@ O projeto foi construído em fases (veja os arquivos `FASE-1.md` a `FASE-5.md`),
 ```text
 web-messenger/
 ├── backend/
-│   ├── data/              # acesso aos dados (db, users, messages)
+│   ├── data/              # schema do banco e acesso aos dados (db, users, messages)
+│   ├── drizzle/           # migrations SQL geradas pelo Drizzle Kit
 │   ├── src/
 │   │   ├── errors/        # AppError
 │   │   ├── middleware/    # autenticação e tratamento de erros
 │   │   ├── routes/        # rotas de mensagens, usuários, auth e health
 │   │   ├── utils/         # geração e validação de token
-│   │   ├── websocket.js   # servidor WebSocket e conexões por usuário
-│   │   └── index.js
+│   │   ├── types.ts       # tipos compartilhados (User, Message, eventos)
+│   │   ├── websocket.ts   # servidor WebSocket e conexões por usuário
+│   │   └── index.ts
+│   ├── drizzle.config.ts
 │   └── .env.example
+├── docker-compose.yml     # PostgreSQL
 ├── frontend/
 │   └── src/
 │       ├── components/    # Auth, HealthCheck
@@ -79,9 +85,19 @@ web-messenger/
 
 ## Como executar
 
-Pré-requisito: Node.js instalado.
+Pré-requisitos: Node.js e Docker (Docker Desktop no Windows) instalados.
 
-### 1. Backend
+### 1. Banco de dados
+
+Na raiz do projeto, suba o PostgreSQL:
+
+```bash
+docker compose up -d
+```
+
+Os dados ficam no volume `postgres-data` e continuam lá quando o container é reiniciado.
+
+### 2. Backend
 
 ```bash
 cd backend
@@ -89,21 +105,44 @@ npm install
 cp .env.example .env
 ```
 
-Abra o arquivo `.env` e defina um valor para o segredo do JWT:
+Abra o arquivo `.env` e defina um valor para o segredo do JWT. O `DATABASE_URL` do exemplo já aponta para o banco do `docker-compose.yml`:
 
 ```env
+PORT=3000
 JWT_SECRET=um-segredo-longo-e-aleatorio
+DATABASE_URL=postgres://messenger:messenger@localhost:5432/messenger
 ```
 
-Inicie o servidor (execute a partir da pasta `backend`, pois o arquivo `db.json` é criado nela):
+Crie as tabelas aplicando as migrations (necessário na primeira vez e sempre que houver uma migration nova):
 
 ```bash
+npm run db:migrate
+```
+
+Inicie o servidor em modo de desenvolvimento (reinicia ao salvar):
+
+```bash
+npm run dev
+```
+
+Ou gere o build e rode a versão compilada:
+
+```bash
+npm run build
 npm start
 ```
 
 O backend sobe em `http://localhost:3000`.
 
-### 2. Frontend
+Outros scripts úteis:
+
+| Script | O que faz |
+| --- | --- |
+| `npm run typecheck` | Verifica os tipos sem gerar arquivos |
+| `npm run db:generate` | Gera uma migration nova após alterar `data/schema.ts` |
+| `npm run db:studio` | Abre o Drizzle Studio para ver os dados no navegador |
+
+### 3. Frontend
 
 Em outro terminal:
 
@@ -115,7 +154,7 @@ npm run dev
 
 O frontend fica disponível em `http://localhost:5173`.
 
-### 3. Testando
+### 4. Testando
 
 1. Abra duas abas (ou uma aba normal e uma anônima).
 2. Crie duas contas diferentes.
@@ -195,7 +234,7 @@ Resposta `201`:
 }
 ```
 
-Erros: `400` (destinatário inválido ou texto vazio) e `401` (token ausente, inválido ou expirado).
+Erros: `400` (destinatário inválido, texto vazio ou com mais de 2000 caracteres), `401` (token ausente, inválido ou expirado) e `404` (destinatário não encontrado).
 
 ### WebSocket
 
@@ -217,7 +256,7 @@ Um mesmo usuário pode estar conectado em várias abas ao mesmo tempo, e todas r
 ## Limitações conhecidas
 
 - A URL da API está fixa em `localhost:3000` no frontend.
-- A persistência é em arquivo JSON, adequada para estudo, não para produção.
+- O frontend ainda está em JavaScript.
 - Ainda não há testes automatizados.
 - Ainda não há deploy.
 
@@ -226,12 +265,16 @@ Um mesmo usuário pode estar conectado em várias abas ao mesmo tempo, e todas r
 - [ ] Lista de conversas e histórico das últimas 50 mensagens por conversa
 - [ ] Presença online/offline em tempo real
 - [ ] Middleware de logging centralizado
-- [ ] Variáveis de ambiente para as URLs do frontend e a porta do backend
-- [ ] Validações adicionais (formato de email, tamanho de senha e de mensagem)
-- [ ] Migração para TypeScript
-- [ ] Banco de dados PostgreSQL com Prisma
+- [x] Porta do backend configurável (`PORT`)
+- [ ] Variável de ambiente para a URL da API no frontend
+- [x] Limite de 2000 caracteres por mensagem
+- [ ] Validações adicionais (formato de email, tamanho de senha)
+- [x] Migração do backend para TypeScript
+- [ ] Migração do frontend para TypeScript
+- [x] Banco de dados PostgreSQL com Drizzle
 - [ ] Testes automatizados
-- [ ] Docker e CI com GitHub Actions
+- [x] PostgreSQL com Docker Compose
+- [ ] CI com GitHub Actions
 - [ ] Deploy
 
 ## Autor
